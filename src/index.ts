@@ -15,11 +15,41 @@ interface TransformCallbackOptions {
 
 interface TransformedHandlerParams extends Omit<HttpRequest, 'getQuery'> {
   getQuery: () => Record<string, string>
+  body: {
+    json: (res: HttpResponse) => Promise<Record<string, unknown> | Error>
+  }
   res: HttpResponse
 }
 
 export type WrappedTemplatedApp = Omit<TemplatedApp, HttpMethod> & {
   [Method in HttpMethod]: (pattern: RecognizedString, handler: (params: TransformedHandlerParams) => void | Promise<void>) => WrappedTemplatedApp
+}
+
+const readJsonBody = (res: HttpResponse): Promise<Record<string, unknown> | Error> => {
+  return new Promise((resolve, reject) => {
+    let buffer = new Uint8Array(0)  // Buffer to accumulate data
+
+    res.onData((chunk, isLast) => {
+      const currentChunk = new Uint8Array(chunk)
+      const newBuffer = new Uint8Array(buffer.length + currentChunk.length)
+      newBuffer.set(buffer)
+      newBuffer.set(currentChunk, buffer.length)
+      buffer = newBuffer
+
+      if (isLast) {
+        try {
+          const json = JSON.parse(Buffer.from(buffer).toString()) as Record<string, unknown>
+          resolve(json)
+        } catch {
+          reject(new Error('Invalid JSON'))
+        }
+      }
+    })
+
+    res.onAborted(() => {
+      reject(new Error('Request aborted'))
+    })
+  })
 }
 
 export const transformCallback = ({
@@ -33,6 +63,9 @@ export const transformCallback = ({
         handler({
           ...req,
           getQuery: () => parseQueryFromURL(req.getQuery()),
+          body: {
+            json: () => readJsonBody(res)
+          },
           res
         })
       })
