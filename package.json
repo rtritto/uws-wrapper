@@ -1,6 +1,6 @@
 {
   "name": "uws-wrapper",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "packageManager": "yarn@4.5.0",
   "type": "module",
