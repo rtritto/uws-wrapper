@@ -16,7 +16,7 @@ interface TransformCallbackOptions {
 interface TransformedHandlerParams extends Omit<HttpRequest, 'getQuery'> {
   getQuery: () => Record<string, string>
   body: {
-    json: (res: HttpResponse) => Promise<Record<string, unknown> | Error>
+    json: () => Promise<Record<string, unknown> | Error>
   }
   res: HttpResponse
 }
