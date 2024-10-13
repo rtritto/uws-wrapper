@@ -6,6 +6,10 @@ type HttpMethod = 'get' | 'post' | 'options' | 'del' | 'patch' | 'put' | 'head' 
 const DEFAULT_HTTP_METHODS = new Set<HttpMethod>(['get', 'post', 'options', 'del', 'patch', 'put', 'head', 'connect', 'trace', 'any'])
 
 interface TransformCallbackOptions {
+  /**
+   * Apply transform callback to these HTTP methods
+   * @default 'get | post | options | del | patch | put | head | connect | trace | any'
+   */
   httpMethods?: typeof DEFAULT_HTTP_METHODS
 }
 
@@ -37,3 +41,5 @@ export const transformCallback = ({
 
   return app as unknown as WrappedTemplatedApp
 }
+
+transformCallback({ httpMethods: new Set(['get', 'post', 'del']) })
