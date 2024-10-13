@@ -16,7 +16,7 @@ interface TransformCallbackOptions {
 interface TransformedHandlerParams extends Omit<HttpRequest, 'getQuery'> {
   getQuery: () => Record<string, string>
   body: {
-    json: () => Promise<Record<string, unknown> | Error>
+    json: () => Promise<Record<string, unknown>>
   }
   res: HttpResponse
 }
@@ -25,7 +25,7 @@ export type WrappedTemplatedApp = Omit<TemplatedApp, HttpMethod> & {
   [Method in HttpMethod]: (pattern: RecognizedString, handler: (params: TransformedHandlerParams) => void | Promise<void>) => WrappedTemplatedApp
 }
 
-const readJsonBody = (res: HttpResponse): Promise<Record<string, unknown> | Error> => {
+const readJsonBody = (res: HttpResponse): Promise<Record<string, unknown>> => {
   return new Promise((resolve, reject) => {
     let buffer = new Uint8Array(0)  // Buffer to accumulate data
 
