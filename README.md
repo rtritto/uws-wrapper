@@ -28,9 +28,7 @@ yarn add uws-wrapper
   console.log(jsonBody)   // { prop1: 1, prop2: 2 }
   ```
 
-## Usage
-
-### Register the Plugin
+## Register the Plugin + Usage
 ```ts
 import { App } from 'uWebSockets.js'
 import { transformCallback } from 'uws-wrapper'
