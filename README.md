@@ -1,4 +1,4 @@
-# template-yarn-berry
+# uws-wrapper
 Stack:
 - Yarn Berry
 - TypeScript
@@ -7,13 +7,13 @@ Stack:
 
 ## Install
 ```sh
-yarn add template-yarn-berry
+yarn add uws-wrapper
 ```
 
 
 ## Example
 ```ts
-import { <FUNCTION> } from 'template-yarn-berry'
+import { <FUNCTION> } from 'uws-wrapper'
 
 <FUNCTION>()
 ```

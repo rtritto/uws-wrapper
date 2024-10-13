@@ -1,5 +1,5 @@
 {
-  "name": "template-yarn-berry",
+  "name": "uws-wrapper",
   "version": "0.0.1",
   "license": "MIT",
   "packageManager": "yarn@4.5.0",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rtritto/template-yarn-berry.git"
+    "url": "git+https://github.com/rtritto/uws-wrapper.git"
   },
   "files": [
     "dist"
@@ -24,6 +24,12 @@
     "prepublishOnly": "yarn build",
     "od": "yarn outdated"
   },
+  "dependencies": {
+    "fastest-qs": "^1.0.1"
+  },
+  "peerDependencies": {
+    "uWebSockets.js": "^20"
+  },
   "devDependencies": {
     "@types/node": "^22.7.5",
     "@yarnpkg/sdks": "^3.2.0",
@@ -32,7 +38,8 @@
     "pkgroll": "^2.5.0",
     "tsx": "^4.19.1",
     "typescript": "5.5.4",
-    "typescript-eslint": "^8.8.1"
+    "typescript-eslint": "^8.8.1",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.49.0"
   },
   "engines": {
     "node": ">=20"
