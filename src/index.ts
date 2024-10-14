@@ -60,13 +60,20 @@ export const transformCallback = ({
 
     app[httpMethod as HttpMethod] = ((path: RecognizedString, handler: (params: TransformedHandlerParams) => void | Promise<void>): WrappedTemplatedApp => {
       return originalBindMethod(path, (res, req) => {
-        handler({
-          ...req,
-          getQuery: () => parseQueryFromURL(req.getQuery()),
-          body: {
-            json: () => readJsonBody(res)
-          },
-          res
+        res.onAborted(() => {
+          res.isAborted = true
+        })
+        res.cork(() => {
+          if (!res.isAborted) {
+            handler({
+              ...req,
+              getQuery: () => parseQueryFromURL(req.getQuery()),
+              body: {
+                json: () => readJsonBody(res)
+              },
+              res
+            })
+          }
         })
       })
     }) as unknown as typeof app[HttpMethod]
