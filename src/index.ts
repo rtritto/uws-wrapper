@@ -18,7 +18,9 @@ interface TransformedHandlerParams extends Omit<HttpRequest, 'getQuery'> {
   body: {
     json: () => Promise<Record<string, unknown>>
   }
-  res: HttpResponse
+  res: HttpResponse & {
+    wrap: (callback: () => void) => void
+  }
 }
 
 export type WrappedTemplatedApp = Omit<TemplatedApp, HttpMethod> & {
@@ -60,21 +62,24 @@ export const transformCallback = ({
 
     app[httpMethod as HttpMethod] = ((path: RecognizedString, handler: (params: TransformedHandlerParams) => void | Promise<void>): WrappedTemplatedApp => {
       return originalBindMethod(path, (res, req) => {
-        res.onAborted(() => {
-          res.isAborted = true
-        })
-        res.cork(() => {
-          if (!res.isAborted) {
-            handler({
-              ...req,
-              getQuery: () => parseQueryFromURL(req.getQuery()),
-              body: {
-                json: () => readJsonBody(res)
-              },
-              res
-            })
-          }
-        })
+        res.wrap = (callback: () => void) => {
+          res.onAborted(() => {
+            res.isAborted = true
+          })
+          res.cork(() => {
+            if (!res.isAborted) {
+              callback()
+            }
+          })
+        }
+        handler({
+          ...req,
+          getQuery: () => parseQueryFromURL(req.getQuery()),
+          body: {
+            json: () => readJsonBody(res)
+          },
+          res
+        } as TransformedHandlerParams)
       })
     }) as unknown as typeof app[HttpMethod]
   }
