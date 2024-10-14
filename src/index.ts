@@ -81,5 +81,3 @@ export const transformCallback = ({
 
   return app as unknown as WrappedTemplatedApp
 }
-
-transformCallback({ httpMethods: new Set(['get', 'post', 'del']) })
