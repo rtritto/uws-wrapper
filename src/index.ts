@@ -61,8 +61,14 @@ export const transformCallback = ({
     app[httpMethod as HttpMethod] = ((path: RecognizedString, handler: (params: TransformedHandlerParams) => void | Promise<void>): WrappedTemplatedApp => {
       return originalBindMethod(path, (res, req) => {
         handler({
-          ...req,
+          getHeader: req.getHeader,
+          getParameter: req.getParameter,
+          getUrl: req.getUrl,
+          getMethod: req.getMethod,
+          getCaseSensitiveMethod: req.getCaseSensitiveMethod,
           getQuery: () => parseQueryFromURL(req.getQuery()),
+          forEach: req.forEach,
+          setYield: req.setYield,
           body: {
             json: () => readJsonBody(res)
           },
