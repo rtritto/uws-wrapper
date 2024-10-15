@@ -65,7 +65,7 @@ export const transformCallback = ({
         req.body = {
           json: <T>() => readJsonBody(res) as Promise<T>
         }
-        res.getQuery = () => parseQueryFromURL(req.getQuery())
+        req.getQuery = <T>() => parseQueryFromURL(req.getQuery()) as T
         handler({
           req,
           res
