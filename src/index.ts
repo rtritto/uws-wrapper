@@ -65,7 +65,8 @@ export const transformCallback = ({
         req.body = {
           json: <T>() => readJsonBody(res) as Promise<T>
         }
-        req.getQuery = <T>() => parseQueryFromURL(req.getQuery()) as T
+        // @ts-expect-error: replace prototype method
+        req.prototype.getQuery = <T>() => parseQueryFromURL(req.getQuery()) as T
         handler({
           req,
           res
