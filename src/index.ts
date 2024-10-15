@@ -13,10 +13,12 @@ interface TransformCallbackOptions {
   httpMethods?: typeof DEFAULT_HTTP_METHODS
 }
 
-interface TransformedHandlerParams extends Omit<HttpRequest, 'getQuery'> {
-  getQuery: <T = Record<string, string>>() => T
-  body: {
-    json: <T = Record<string, unknown>>() => Promise<T>
+interface TransformedHandlerParams {
+  req: HttpRequest & {
+    body: {
+      json: <T = Record<string, unknown>>() => Promise<T>
+    }
+    getQuery: <T = Record<string, string>>() => T
   }
   res: HttpResponse
 }
@@ -56,22 +58,16 @@ export const transformCallback = ({
   httpMethods = DEFAULT_HTTP_METHODS
 }: TransformCallbackOptions = {}) => (app: TemplatedApp): WrappedTemplatedApp => {
   for (const httpMethod of httpMethods) {
-    const originalBindMethod = app[httpMethod as HttpMethod].bind(app) as unknown as (pattern: RecognizedString, handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>) => WrappedTemplatedApp
+    const originalBindMethod = app[httpMethod as HttpMethod].bind(app) as unknown as (pattern: RecognizedString, handler: (res: TransformedHandlerParams['res'], req: TransformedHandlerParams['req']) => void | Promise<void>) => WrappedTemplatedApp
 
     app[httpMethod as HttpMethod] = ((path: RecognizedString, handler: (params: TransformedHandlerParams) => void | Promise<void>): WrappedTemplatedApp => {
       return originalBindMethod(path, (res, req) => {
+        req.body = {
+          json: <T>() => readJsonBody(res) as Promise<T>
+        }
+        res.getQuery = () => parseQueryFromURL(req.getQuery())
         handler({
-          getHeader: req.getHeader.bind(req),
-          getParameter: req.getParameter.bind(req),
-          getUrl: req.getUrl.bind(req),
-          getMethod: req.getMethod.bind(req),
-          getCaseSensitiveMethod: req.getCaseSensitiveMethod.bind(req),
-          getQuery: () => parseQueryFromURL(req.getQuery()),
-          forEach: req.forEach.bind(req),
-          setYield: req.setYield.bind(req),
-          body: {
-            json: () => readJsonBody(res)
-          },
+          req,
           res
         } as TransformedHandlerParams)
       })
