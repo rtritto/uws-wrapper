@@ -1,3 +1,6 @@
+# ARCHIVED
+Use [uws-utils](<https://github.com/rtritto/uws-utils)>) instead
+
 # uws-wrapper
 
 Plugin for [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) that wraps _App_ instance to improve DX (Developer Experience).
