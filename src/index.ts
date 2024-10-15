@@ -14,7 +14,7 @@ interface TransformCallbackOptions {
 }
 
 interface TransformedHandlerParams {
-  req: HttpRequest & {
+  req: Omit<HttpRequest, 'getQuery'> & {
     body: {
       json: <T = Record<string, unknown>>() => Promise<T>
     }
