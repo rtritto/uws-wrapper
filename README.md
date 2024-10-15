@@ -1,5 +1,5 @@
 # ARCHIVED
-Use [uws-utils](https://github.com/rtritto/uws-utils) instead
+Use [uws-utils](https://github.com/rtritto/uws-common) instead
 
 # uws-wrapper
 
